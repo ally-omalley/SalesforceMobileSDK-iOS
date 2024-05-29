@@ -27,7 +27,6 @@
 #import <SalesforceSDKCore/SFUserAccountIdentity.h>
 #import <SalesforceSDKCore/SFUserAccountConstants.h>
 #import <SalesforceSDKCore/SFOAuthCoordinator.h>
-#import <SalesforceSDKCore/SFOAuthCoordinator.h>
 #import <SalesforceSDKCore/SFSDKLoginViewControllerConfig.h>
 #import <SalesforceSDKCore/SalesforceSDKConstants.h>
 
@@ -328,6 +327,11 @@ NS_SWIFT_NAME(UserAccountManager)
  */
 @property (nonatomic, copy, nullable) SFIDPUserSelectionBlock idpUserSelectionAction;
 
+
+/** Use this to add handling for navigation actions like email and custom links on the login screen, return WKNavigationActionPolicyAllow for any other actions to make sure that the login flow isn't interrupted
+ */
+@property (nonatomic, copy, nullable) WKNavigationActionPolicy (^navigationPolicyForAction)(WKWebView *webview, WKNavigationAction *action);
+
 /**  Use this property to enable an app to become and IdentityProvider for other apps
  *
  */
@@ -353,6 +357,11 @@ NS_SWIFT_NAME(UserAccountManager)
  *
  */
 @property (nonatomic,strong) SFSDKLoginViewControllerConfig *loginViewControllerConfig;
+
+/**
+ * Indicates that that web based authentication should be used instead of native login.
+ */
+@property (nonatomic, assign) BOOL shouldFallbackToWebAuthentication;
 
 /** Shared singleton
  */
@@ -389,6 +398,11 @@ NS_SWIFT_NAME(UserAccountManager)
  */
 - (SFUserAccount*)createUserAccount:(SFOAuthCredentials *)credentials NS_SWIFT_NAME(createUserAccount(with:));
 
+/** Create an account when necessary using token endpoint response data.  This function is intented for internal use only.
+  @param data The token endpoint response to use.
+  @param scene Optional scene to identify Native Login View Controller.
+ */
+- (void)createNativeUserAccount:(NSData *)data scene:(nullable UIScene *)scene NS_SWIFT_NAME(createNativeUserAccount(with:scene:));
 
 /** Allows you to look up the user account associated with a given user identity.
  @param userIdentity The user identity of the user account to be looked up
